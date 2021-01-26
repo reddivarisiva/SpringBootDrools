@@ -1,0 +1,34 @@
+package KieRule;
+import com.synechron.spring.drools.model.Participant;
+
+rule "Participant Name"
+
+when
+$first : Participant( $fromP3: fromP3 )
+$second : Participant( fromP3 , name!=$first.name || caseNumber != $first.caseNumber || dob != $first.dob)
+
+then
+System.out.println($first.getDob());
+System.out.println($second.getDob());
+$first.addValidations("Name/Case Number/DOB is Incorrect. Allow manual Lookup match");
+end;
+
+rule "Participant Status - Legal Hold"
+
+when
+$first : Participant( $fromP3: fromP3 )
+$second : Participant( fromP3 , status == "Legal Hold")
+
+then
+$first.addValidations("Goes to Legal Processing");
+end;
+
+rule "Participant Status"
+
+when
+$first : Participant( $fromP3: fromP3 )
+$second : Participant( fromP3 , status == "Death")
+
+then
+$first.addValidations("Goes to Manual Review");
+end;
